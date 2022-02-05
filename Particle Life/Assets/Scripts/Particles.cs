@@ -1,10 +1,10 @@
-using UnityEngine;
+/*using UnityEngine;
 using System.Collections.Generic;
 
 struct Particle {
-	public int type;
-	public float x, y;
-	public float vx, vy;
+	public int type; // 4 bytes
+	public float x, y; // 2 * 4 bytes
+	public float vx, vy; // 2 * 4 bytes
 	public Transform transform;
 }
 
@@ -36,3 +36,4 @@ public class ParticleTypes {
 	private float[] mMinR;
 	private float[] mMaxR;
 }
+*/

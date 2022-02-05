@@ -20,7 +20,7 @@ public class Universe : MonoBehaviour {
 		return val * sigma + mean;
 	}
 
-	[SerializeField, Range(5f, 50f)]
+	[SerializeField, Range(1f, 50f)]
 	float radius = 50f;
 	
 	float diameter;
@@ -29,11 +29,14 @@ public class Universe : MonoBehaviour {
 	[SerializeField, Range(1, 10)]
 	int numberOfTypes = 3;
 
-	[SerializeField, Range(1, 500)]
+	[SerializeField, Range(1, 2000)]
 	int numberOfParticles = 10;
 
 	[SerializeField]
 	Bounds bounds = new Bounds(Vector3.zero, Vector3.one);
+
+	[SerializeField]
+	bool mWrapMode = true;
 
 	Vector3 screenBounds;
 	float P2W, W2P;
@@ -188,6 +191,7 @@ public class Universe : MonoBehaviour {
 	}
 
 	private void Forces () {
+		int loops = 0;
 		for (int i = 0; i < mParticles.Length; i++) {
 			
 			// Current particle
@@ -232,10 +236,14 @@ public class Universe : MonoBehaviour {
 				// Apply force
 				p.vx += f * dx;
 				p.vy += f * dy;
+
+				loops += 1;
 			}
 
 			mParticles[i] = p;
 		}
+
+		Debug.Log(loops);
 
 		// Update position
 		for (int i = 0; i < mParticles.Length; i++) {
@@ -254,22 +262,39 @@ public class Universe : MonoBehaviour {
 			p.vy *= (1f - mFriction);
 
 			// Check for wall collisions
-			if (p.x <= diameter) {
-				p.vx = -p.vx;
-				p.x = diameter;
-			}
-			else if (p.x >= mWidth - diameter) {
-				p.vx = -p.vx;
-				p.x = mWidth - diameter;
-			}
+			if (mWrapMode) {
+				if (p.x < 0f) {
+					p.x += mWidth;
+				}
+				else if (p.x >= mWidth) {
+					p.x -= mWidth;
+				}
 
-			if (p.y <= diameter) {
-				p.vy = -p.vy;
-				p.y = diameter;
+				if (p.y < 0f) {
+					p.y += mHeight;
+				}
+				else if (p.y >= mHeight) {
+					p.y -= mHeight;
+				}
 			}
-			else if (p.y >= mHeight - diameter) {
-				p.vy = -p.vy;
-				p.y = mHeight - diameter;
+			else {
+				if (p.x <= diameter) {
+					p.vx = -p.vx;
+					p.x = diameter;
+				}
+				else if (p.x >= mWidth - diameter) {
+					p.vx = -p.vx;
+					p.x = mWidth - diameter;
+				}
+
+				if (p.y <= diameter) {
+					p.vy = -p.vy;
+					p.y = diameter;
+				}
+				else if (p.y >= mHeight - diameter) {
+					p.vy = -p.vy;
+					p.y = mHeight - diameter;
+				}
 			}
 
 			mParticles[i] = p;
